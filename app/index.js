@@ -6,7 +6,6 @@ import React, {
     View
 } from 'react-native';
 import ExNavigator from '@exponent/react-native-navigator';
-import routes from './routes';
 import Navigator from 'react-native-navigator';
 import Home from './home';
 
@@ -18,17 +17,11 @@ const {
 class Index extends Component{
     render() {
         return (
-            <Router component={Home} >
+            <Router component={Home}>
             <Route path="/home" component={Home}/>
             </Router>
         );
     }
 }
-
-const styles = StyleSheet.create({
-    menu: {
-        flex: 1
-    }
-});
 
 module.exports = Index;
