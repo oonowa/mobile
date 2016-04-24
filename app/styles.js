@@ -29,4 +29,9 @@ module.exports = StyleSheet.create({
         right: 0,
         bottom: 0,
     },
+    modal: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 300
+    },
 });

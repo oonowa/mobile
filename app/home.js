@@ -12,6 +12,7 @@ import ActionButton from 'react-native-action-button';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MapView from 'react-native-maps';
 import Spinner from 'react-native-spinkit';
+import Modal from 'react-native-modalbox';
 import styles from './styles';
 
 var { width, height } = Dimensions.get('window');
@@ -39,7 +40,7 @@ class Home extends Component{
             lastPosition: null,
             markers: [],
             route: [],
-            poligons: [],
+            polygons: [],
             loading: false
         }
     }
@@ -87,6 +88,41 @@ class Home extends Component{
 
     onClan() {
         this.loading(true);
+
+        fetch('https://api.oonowa.space/territories', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            }
+        })
+        .then( (response) => {
+            this.loading(false);
+            return response.json()
+        })
+        .then( (response) => {
+            let polygons = response.data;
+
+            polygons.forEach(function(territory){
+                territory.coords = [];
+                territory.boundaries.coordinates[0].forEach(function(coord){
+                    territory.coords.push({
+                        latitude: coord[0],
+                        longitude: coord[1]
+                    });
+                });
+                territory.center = {
+                    latitude: territory.settlement.coordinates[0],
+                    longitude: territory.settlement.coordinates[1]
+                };
+            });
+
+            this.setState({polygons});
+        })
+        .catch( (error) => {
+            alert('Hubo un error procesando tus datos');
+            this.loading(false);
+        });
     }
 
     onReport() {
@@ -96,25 +132,44 @@ class Home extends Component{
     onResource() {
         this.loading(true);
 
-        fetch('https://mywebsite.com/endpoint/', {
+        fetch('https://api.oonowa.space/resources', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                firstParam: 'yourValue',
-                secondParam: 'yourOtherValue',
-            })
+            }
         })
-        .then( (response) => {return response.json()} )
         .then( (response) => {
+            this.loading(false);
+            return response.json()
+        })
+        .then( (response) => {
+            let polygons = response.data;
 
+            polygons.forEach(function(territory){
+                territory.coords = [];
+                territory.boundaries.coordinates[0].forEach(function(coord){
+                    territory.coords.push({
+                        latitude: coord[0],
+                        longitude: coord[1]
+                    });
+                });
+                territory.center = {
+                    latitude: territory.settlement.coordinates[0],
+                    longitude: territory.settlement.coordinates[1]
+                };
+            });
+
+            this.setState({polygons});
         })
         .catch( (error) => {
             alert('Hubo un error procesando tus datos');
             this.loading(false);
         });
+    }
+
+    onSubscribe() {
+        this.refs.subscribe.open();
     }
 
     render() {
@@ -132,6 +187,16 @@ class Home extends Component{
                 />
             ))}
 
+            {this.state.polygons.map(polygon => (
+                <MapView.Polygon coordinates={polygon.coords} fillColor={'#E36E46'} strokeColor={'#E36E46'}/>
+            ))}
+
+            {this.state.polygons.map(polygon => (
+                <MapView.Marker.Animated
+                coordinate={polygon.center}
+                />
+            ))}
+
             </MapView.Animated>
             <ActionButton buttonColor="#E85151">
             <ActionButton.Item buttonColor='#404A46' title="Clanes" onPress={() => {this.onClan()}}>
@@ -143,11 +208,16 @@ class Home extends Component{
             <ActionButton.Item buttonColor='#3498db' title="Recursos" onPress={() => {this.onResource()}}>
             <Icon name="waterdrop" style={styles.actionButtonIcon} />
             </ActionButton.Item>
-            <ActionButton.Item buttonColor='#9cd26a' title="Subscríbete" onPress={() => {this.onResource()}}>
+            <ActionButton.Item buttonColor='#9cd26a' title="Subscríbete" onPress={() => {this.onSubscribe()}}>
             <Icon name="android-textsms" style={styles.actionButtonIcon} />
             </ActionButton.Item>
             </ActionButton>
             <Spinner style={styles.spinner} isVisible={this.state.loading} size={90} type={'ThreeBounce'} color={'#404A46'}/>
+            <Modal style={styles.modal} position={"bottom"} ref={"subscribe"}>
+            <Text>
+            Lo sentimos, actualmente no contamos con el servicio en tu zona
+            </Text>
+            </Modal>
             </View>
         );
     }
