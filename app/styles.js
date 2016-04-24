@@ -32,6 +32,6 @@ module.exports = StyleSheet.create({
     modal: {
         justifyContent: 'center',
         alignItems: 'center',
-        height: 300
+        height: 200
     },
 });

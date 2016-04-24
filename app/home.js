@@ -14,6 +14,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import MapView from 'react-native-maps';
 import Spinner from 'react-native-spinkit';
 import Modal from 'react-native-modalbox';
+import {MKButton, MKTextField} from 'react-native-material-kit';
 import styles from './styles';
 
 var { width, height } = Dimensions.get('window');
@@ -24,6 +25,14 @@ const LONGITUDE = -101.230692739541;
 const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 const SPACE = 0.01;
+
+const ColorButton = MKButton.coloredButton()
+.withText('SUBSCRIBIR')
+.withOnPress(() => {
+    alert('Te has subscrito satisfactoriamente');
+})
+.build();
+
 
 class Home extends Component{
     watchID = (null: ?number);
@@ -222,8 +231,9 @@ class Home extends Component{
             <Modal style={styles.modal} position={"top"} ref={"subscribe"}>
             <TextInput
             keyboardType="number-pad"
-            style={{height: 60,  borderColor: 'gray', borderWidth: 1, margin: 20}}
+            style={{height: 50,  borderColor: 'gray', borderWidth: 1, margin: 20}}
             />
+            <ColorButton/>
             </Modal>
             </View>
         );
