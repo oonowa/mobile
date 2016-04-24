@@ -34,4 +34,8 @@ module.exports = StyleSheet.create({
         alignItems: 'center',
         height: 200
     },
+    reports: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
 });

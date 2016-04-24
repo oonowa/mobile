@@ -6,7 +6,8 @@ import React, {
     View,
     Dimensions,
     Animated,
-    TextInput
+    TextInput,
+    ScrollView
 } from 'react-native';
 
 import ActionButton from 'react-native-action-button';
@@ -15,7 +16,9 @@ import MapView from 'react-native-maps';
 import Spinner from 'react-native-spinkit';
 import Modal from 'react-native-modalbox';
 import {MKButton, MKTextField} from 'react-native-material-kit';
+import MKCardStyles from './card.js';
 import styles from './styles';
+
 
 var { width, height } = Dimensions.get('window');
 
@@ -140,7 +143,8 @@ class Home extends Component{
     }
 
     onReport() {
-        this.loading(true);
+        this.refs.reports.open();
+
     }
 
     onResource() {
@@ -233,7 +237,14 @@ class Home extends Component{
             keyboardType="number-pad"
             style={{height: 50,  borderColor: 'gray', borderWidth: 1, margin: 20}}
             />
-            <ColorButton/>
+            </Modal>
+            <Modal style={styles.reports} position={"top"} ref={"reports"}>
+            <View style={MKCardStyles.card}>
+            <Text style={MKCardStyles.title}>Afectaciones de agua en Maicao</Text>
+            <Text style={MKCardStyles.content}>
+            En estas épocas del año estámos presentando las sequías comunes, en esta ocación recuerda moverte hacia el occidene en donde hay racionamientos de agua
+            </Text>
+            </View>
             </Modal>
             </View>
         );
