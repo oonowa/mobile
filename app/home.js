@@ -5,7 +5,8 @@ import React, {
     Text,
     View,
     Dimensions,
-    Animated
+    Animated,
+    TextInput
 } from 'react-native';
 
 import ActionButton from 'react-native-action-button';
@@ -104,7 +105,7 @@ class Home extends Component{
             let polygons = response.data;
 
             polygons.forEach(function(territory){
-                territory.coords = [];
+                territory.coords = new Array();
                 territory.boundaries.coordinates[0].forEach(function(coord){
                     territory.coords.push({
                         latitude: coord[0],
@@ -115,9 +116,13 @@ class Home extends Component{
                     latitude: territory.settlement.coordinates[0],
                     longitude: territory.settlement.coordinates[1]
                 };
+                territory.color = '#E36E46';
             });
 
-            this.setState({polygons});
+            let state = this.state;
+            state.polygons = polygons;
+
+            this.setState(state);
         })
         .catch( (error) => {
             alert('Hubo un error procesando tus datos');
@@ -133,7 +138,7 @@ class Home extends Component{
         this.loading(true);
 
         fetch('https://api.oonowa.space/resources', {
-            method: 'POST',
+            method: 'GET',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -145,24 +150,25 @@ class Home extends Component{
         })
         .then( (response) => {
             let polygons = response.data;
-
-            polygons.forEach(function(territory){
-                territory.coords = [];
-                territory.boundaries.coordinates[0].forEach(function(coord){
-                    territory.coords.push({
+            polygons.forEach(function(resource){
+                resource.coords = [];
+                resource.boundaries.coordinates[0].forEach(function(coord){
+                    resource.coords.push({
                         latitude: coord[0],
                         longitude: coord[1]
                     });
                 });
-                territory.center = {
-                    latitude: territory.settlement.coordinates[0],
-                    longitude: territory.settlement.coordinates[1]
-                };
+
+                resource.color = resource.type == 'Water' ? '#60abb8' : '#7bb844';
             });
 
-            this.setState({polygons});
+            let state = this.state;
+            state.polygons = polygons;
+
+            this.setState(state);
         })
         .catch( (error) => {
+            console.log(error);
             alert('Hubo un error procesando tus datos');
             this.loading(false);
         });
@@ -188,7 +194,7 @@ class Home extends Component{
             ))}
 
             {this.state.polygons.map(polygon => (
-                <MapView.Polygon coordinates={polygon.coords} fillColor={'#E36E46'} strokeColor={'#E36E46'}/>
+                <MapView.Polygon coordinates={polygon.coords} fillColor={polygon.color} strokeColor={polygon.color}/>
             ))}
 
             {this.state.polygons.map(polygon => (
@@ -213,10 +219,11 @@ class Home extends Component{
             </ActionButton.Item>
             </ActionButton>
             <Spinner style={styles.spinner} isVisible={this.state.loading} size={90} type={'ThreeBounce'} color={'#404A46'}/>
-            <Modal style={styles.modal} position={"bottom"} ref={"subscribe"}>
-            <Text>
-            Lo sentimos, actualmente no contamos con el servicio en tu zona
-            </Text>
+            <Modal style={styles.modal} position={"top"} ref={"subscribe"}>
+            <TextInput
+            keyboardType="number-pad"
+            style={{height: 60,  borderColor: 'gray', borderWidth: 1, margin: 20}}
+            />
             </Modal>
             </View>
         );
