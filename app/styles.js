@@ -10,6 +10,9 @@ module.exports = StyleSheet.create({
         left: 0,
         right: 0,
         backgroundColor: '#404A46',
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     button: {
         marginTop: 50
